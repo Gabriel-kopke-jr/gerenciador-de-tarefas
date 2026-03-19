@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.TarefaDTO;
 import org.example.entity.TarefaEntity;
+import org.example.request.AtualizarTarefaRequest;
+import org.example.request.RegistrarTarefaRequest;
+import org.example.response.AtualizarTarefaResponse;
+import org.example.response.ConsultarTarefaIDResponse;
+import org.example.response.ConsultarTarefaResponse;
 import org.example.service.TarefaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,21 +24,21 @@ public class TarefaController {
     private TarefaService tarefaService;
 
     @PostMapping
-    public void registrarAtividade ( @RequestBody TarefaDTO request){
-    tarefaService.save(request);
+    public void registrarAtividade ( @RequestBody RegistrarTarefaRequest request){
+    tarefaService.save(request.toDto());
     }
     @GetMapping
-    public List<TarefaEntity> consultar (){
+    public List<ConsultarTarefaResponse> consultar (){
         return tarefaService.consultar();
     }
     @GetMapping("{id}")
-    public TarefaEntity consultar (@PathVariable UUID id){
+    public ConsultarTarefaIDResponse consultar (@PathVariable UUID id){
         return tarefaService.consultar(id);
     }
     @PatchMapping("{id}")
-    public TarefaEntity atualizar(@PathVariable UUID id,
-                                  @RequestBody TarefaDTO request){
-        return tarefaService.atualizar(id, request);}
+    public AtualizarTarefaResponse atualizar(@PathVariable UUID id,
+                                             @RequestBody AtualizarTarefaRequest request){
+        return tarefaService.atualizar(id, request.toDto());}
 
 
 }
