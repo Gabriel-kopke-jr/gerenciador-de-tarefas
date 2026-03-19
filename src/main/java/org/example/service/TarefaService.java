@@ -21,37 +21,29 @@ import java.util.stream.Collectors;
 public class TarefaService {
     @Autowired
     private TarefaRepository tarefaRepository;
+    
+    @Autowired
+    private TarefaFactory tarefaFactory;
+
     public RegistrarTarefaResponse save(TarefaDTO dto){
-        TarefaEntity tarefaEntity = dto.toEntity();
+        TarefaEntity tarefaEntity = tarefaFactory.create(dto);
      tarefaRepository.save(tarefaEntity);
         RegistrarTarefaResponse registrarTarefaResponse = new RegistrarTarefaResponse();
         registrarTarefaResponse.id = tarefaEntity.id;
         return registrarTarefaResponse;
     }
+
     public List<ConsultarTarefaResponse> consultar() {
     List <TarefaEntity> tarefas = tarefaRepository.findAll();
     return tarefas.stream().map(tarefaEntity -> {
-        ConsultarTarefaResponse consultarTarefaResponse = new ConsultarTarefaResponse();
-        consultarTarefaResponse.dataFim = tarefaEntity.dataFim;
-        consultarTarefaResponse.descricao = tarefaEntity.descricao;
-        consultarTarefaResponse.id = tarefaEntity.id;
-        consultarTarefaResponse.responsavel = tarefaEntity.responsavel;
-        consultarTarefaResponse.dataInicio = tarefaEntity.dataInicio;
-        consultarTarefaResponse.nome = tarefaEntity.nome;
-        return consultarTarefaResponse;
+        return tarefaFactory.create(tarefaEntity)
     }).collect(Collectors.toUnmodifiableList());
     }
+
+
     public ConsultarTarefaIDResponse consultar(UUID id){
-
-
         TarefaEntity tarefaEntity = tarefaRepository.findById(id).get();
-        ConsultarTarefaIDResponse consultarTarefaIDResponse = new ConsultarTarefaIDResponse();
-        consultarTarefaIDResponse.responsavel = tarefaEntity.responsavel;
-        consultarTarefaIDResponse.dataFim = tarefaEntity.dataFim;
-        consultarTarefaIDResponse.dataInicio = tarefaEntity.dataInicio;
-        consultarTarefaIDResponse.descricao = tarefaEntity.descricao;
-        consultarTarefaIDResponse.nome = tarefaEntity.nome;
-        return consultarTarefaIDResponse;
+        return tarefaFactory.create(tarefaEntity);
     }
     public void atualizar (UUID id, TarefaDTO request) {
         TarefaEntity tarefaEntity = tarefaRepository.findById(id).get();
